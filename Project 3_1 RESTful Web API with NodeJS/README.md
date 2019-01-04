@@ -21,7 +21,6 @@ getBlockByIndex() {
     }).catch(() => {
       res.send("No block yet")
     })
-    // res.send(req.params.index)
   });
 }
 ```
