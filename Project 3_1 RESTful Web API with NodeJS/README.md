@@ -1,61 +1,51 @@
-# app
+# Blockchain with Express framework
+
+## app.js
 
 app.js use express as RESTful Framework
 
-## Getting Started
+## Blockchain.js
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
+Blockchain.js continas two classes Block and Blockchain.
+- Block create a singel block
+- Blockchain used to build blocks into chain and connect with "Level" database
 
-### Prerequisites
-
-Installing Node and NPM is pretty straightforward using the installer package available from the (Node.js® web site)[https://nodejs.org/en/].
-
-### Configuring your project
-
-- Use NPM to initialize your project and create package.json to store project dependencies.
+### GET Block Endpoint
+Initiate in Blockchain class by using express and Level DB to get block by index
 ```
-npm init
-```
-- Install crypto-js with --save flag to save dependency to our package.json file
-```
-npm install crypto-js --save
-```
-- Install level with --save flag
-```
-npm install level --save
-```
-
-## Testing
-
-To test code:
-1: Open a command prompt or shell terminal after install node.js.
-2: Enter a node session, also known as REPL (Read-Evaluate-Print-Loop).
-```
-node
-```
-3: Copy and paste your code into your node session
-4: Instantiate blockchain with blockchain variable
-```
-let blockchain = new Blockchain();
-```
-5: Generate 10 blocks using a for loop
-```
-for (var i = 0; i <= 10; i++) {
-  blockchain.addBlock(new Block("test data "+i));
+getBlockByIndex() {
+  let self = this;
+  this.app.get("/block/:index", (req, res) => {
+    self.getBlock(req.params.index).then((result) => {
+      res.send(result)
+    }).catch(() => {
+      res.send("No block yet")
+    })
+    // res.send(req.params.index)
+  });
 }
 ```
-6: Validate blockchain
+
+### POST Block Endpoint
+Initiate in Blockchain class by using express and Level DB to add block to chain
+
 ```
-blockchain.validateChain();
-```
-7: Induce errors by changing block data
-```
-let inducedErrorBlocks = [2,4,7];
-for (var i = 0; i < inducedErrorBlocks.length; i++) {
-  blockchain.chain[inducedErrorBlocks[i]].data='induced chain error';
+postNewBlock() {
+  let self = this;
+  this.app.post("/block", (req, res) => {
+    if(req.body.body == undefined){
+      res.send('Please provide valid content')
+    }
+    else{
+      let newBlock = new Block(req.body.body);
+      console.log("body:"+req.body);
+
+      self.addBlock(newBlock).then((result) => {
+        res.status(201).send(result)
+      })
+    }
+  })
 }
 ```
-8: Validate blockchain. The chain should now fail with blocks 2,4, and 7.
-```
-blockchain.validateChain();
-```
+## levelSandbox.js
+Use Level to save and get block data
