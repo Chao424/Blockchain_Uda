@@ -37,7 +37,7 @@ class Blockchain{
     this.timeoutRequests = [];
     this.index = 0;
     this.db = new LevelSandbox.LevelSandbox();
-    this.getBlock(0).then(()=>{
+    this.db.getLevelDBData(0).then(()=>{
       this.AddRequestValidation();
       this.validateRequestByWallet();
       this.verifyAddressRequest();
@@ -332,3 +332,9 @@ class Blockchain{
       })
     }
 }
+
+/**
+ * Exporting the BlockController class
+ * @param {*} app 
+ */
+module.exports = (app) => { return new Blockchain(app);}
