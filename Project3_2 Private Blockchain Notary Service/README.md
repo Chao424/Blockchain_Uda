@@ -87,6 +87,5 @@ getBlockByIndex() {
 }
 ```
 
-```
 ## levelSandbox.js
 Use Level to save and get block data
