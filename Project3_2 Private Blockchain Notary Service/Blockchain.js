@@ -43,6 +43,7 @@ class Blockchain{
       this.verifyAddressRequest();
       this.getBlockByContent();
     }).catch(()=>{
+      this.generateGenesisBlock();
       this.AddRequestValidation();
       this.validateRequestByWallet();
       this.verifyAddressRequest();
@@ -67,7 +68,9 @@ class Blockchain{
         let height = req.params.content;
         self.db.getLevelDBData(height).then((result) => {
           let block = JSON.parse(result);
-          block.body.star['storyDecoded'] = hex2ascii(block.body.star.story);
+          if (height != 0){
+            block.body.star['storyDecoded'] = hex2ascii(block.body.star.story);
+          }
           res.send(block);
         }).catch(() => {
           res.send("No block yet")
@@ -221,7 +224,7 @@ class Blockchain{
   addBlock(newBlock){
     let self = this
     //check whether GenesisBlock exists, if not, generate one then addBlock
-    this.getBlock(0).then().catch((result)=>{this.generateGenesisBlock().then((result2)=> this.addBlock(newBlock))})
+    this.db.getLevelDBData(0).then().catch((result)=>{this.generateGenesisBlock().then((result2)=> this.addBlock(newBlock))})
 
     // persisData is defined in levelSandbox, it will return a promise of last block information
     return self.db.persisData().then((array)=>{
